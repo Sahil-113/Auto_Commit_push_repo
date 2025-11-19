@@ -1,4 +1,4 @@
-#GitHub Daily Auto-Commit
+# GitHub Daily Auto-Commit
 
 This repository uses a GitHub Actions workflow to create one automated commit per day.
 It helps maintain a continuous contribution streak without manual activity.
