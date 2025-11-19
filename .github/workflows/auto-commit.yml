@@ -1,0 +1,38 @@
+name: Daily auto-commit for GitHub streak
+
+# Runs once per day. Cron uses UTC. (Change schedule if you want a different UTC time.)
+on:
+  schedule:
+    - cron: '0 0 * * *'    # daily at 00:00 UTC
+  workflow_dispatch:       # allows manual run from Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update-streak:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true   # allows push with GITHUB_TOKEN
+
+      - name: Ensure directory exists
+        run: mkdir -p streak
+
+      - name: Update streak file with current timestamp
+        run: |
+          echo "Last auto-commit: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> streak/streak.md
+          echo "" >> streak/streak.md
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push changes
+        run: |
+          git add streak/streak.md
+          git commit -m "chore: daily auto-commit to maintain contribution streak" || echo "No changes to commit"
+          git push origin HEAD
